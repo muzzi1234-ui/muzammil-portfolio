@@ -1,5 +1,5 @@
-
 import React, { useEffect, useMemo, useState } from "react";
+import Admin from "./admin/Admin";
 
 const EMAIL = "muzammil.khalid39@gmail.com";
 const WHATSAPP = "https://wa.me/923322483804";
@@ -802,6 +802,12 @@ function PublicPortfolio() {
 }
 
 export default function App() {
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+
+  if (path === "/admin") {
+    return <Admin />;
+  }
+
   return <PublicPortfolio />;
 }
 
