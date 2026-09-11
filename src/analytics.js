@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:5050";
+const API_URL = "";
 
 const SESSION_KEY = "muzammil_portfolio_session";
 

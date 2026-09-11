@@ -9,3 +9,5 @@ __pycache__/
 *.sqlite
 *.sqlite3
 backend/instance/
+.vercel
+.env*
