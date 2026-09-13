@@ -44,22 +44,37 @@ app = Flask(__name__)
 # DATABASE
 # =========================================================
 
-database_url = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///portfolio_analytics.db",
+# =========================================================
+# DATABASE
+# =========================================================
+
+is_vercel = (
+    os.getenv("VERCEL") == "1"
+    or os.getenv("VERCEL_ENV") is not None
 )
 
-# Render/Neon/PostgreSQL URLs may sometimes use postgres://
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace(
-        "postgres://",
-        "postgresql://",
-        1,
-    )
+database_url = os.getenv("DATABASE_URL")
+
+if database_url:
+    # Render/Neon/PostgreSQL URLs may sometimes use postgres://
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace(
+            "postgres://",
+            "postgresql://",
+            1,
+        )
+
+else:
+    # Local development uses normal SQLite.
+    # Vercel uses /tmp because its deployed filesystem is read-only.
+    if is_vercel:
+        database_url = "sqlite:////tmp/portfolio_analytics.db"
+    else:
+        database_url = "sqlite:///portfolio_analytics.db"
+
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 
 # =========================================================
 # JWT
@@ -86,6 +101,10 @@ init_database(app)
 # CORS
 # =========================================================
 
+# =========================================================
+# CORS
+# =========================================================
+
 CORS(
     app,
     resources={
@@ -93,13 +112,12 @@ CORS(
             "origins": [
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
+                "https://muzammil-portfolio-snowy.vercel.app",
             ],
         }
     },
     supports_credentials=True,
 )
-
-
 # =========================================================
 # HEALTH CHECK
 # =========================================================
